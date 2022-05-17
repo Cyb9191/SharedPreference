@@ -21,6 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Path
 import androidx.core.content.ContentProviderCompat.requireContext
+import retrofit2.Response
 
 
 import com.example.network4.*
@@ -32,6 +33,7 @@ import com.example.network4.*
 const val E_BASE_URL = "https://air-quality.p.rapidapi.com"
 const val API_ID = "YourApiID"
 const val API_KEY = "19e7b8759amshe6b93bd55c131c7p120076jsn06452ac17b99"
+const val RAPIDAPI_KEY= "06a7614749msh19cff85cd7e9993p11616djsnda0c69ab3a46"
 
 //Here you add your url interceptor
 //"app_id" and "app_key" might be different, depending on your API
@@ -91,25 +93,31 @@ class MainActivity : AppCompatActivity() {
 
 //.addQueryParameter("app_id", API_ID)
 //Finally you create your object (Singleton in Java) which generates your service via lazy delegate
-    val api_interceptor = Interceptor {
-        val originalRequest = it.request()
-        val newHttpUrl = originalRequest.url.newBuilder()
+    internal class HeaderInterceptor : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val request = chain.request()
+            val headers = request.headers()
+                .newBuilder()
+                .add("X-RapidAPI-Key", RAPIDAPI_KEY)
+                .build()
 
-            .addQueryParameter("app_key", API_KEY)
-            .build()
-        val newRequest = originalRequest.newBuilder()
-            .url(newHttpUrl)
-            .build()
-        it.proceed(newRequest)
+            val requestWithHeaders = request.newBuilder().headers(headers).build()
+            return chain.proceed(requestWithHeaders)
     }
+
 
     //Add the logger interceptor optional:
     val logger = HttpLoggingInterceptor().apply { setLevel(HttpLoggingInterceptor.Level.BASIC) }
 
     //Build your OkHttpClient - here you add the api_interceptor and logger
-    val clientHTTP = OkHttpClient().newBuilder()
-        .addNetworkInterceptor(logger)  //optional
-        .addNetworkInterceptor(api_interceptor)
+    val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor(HeaderInterceptor())
+        .build()
+
+    val retrofit = Retrofit.Builder()
+        .client(okHttpClient)
+        .baseUrl("https://air-quality.p.rapidapi.com")
+        .addConverterFactory(GsonConverterFactory.create())
         .build()
 
     //Build your json converter - in this example MOSHI
@@ -119,11 +127,7 @@ class MainActivity : AppCompatActivity() {
 
 
     //FINALLY build your retrofit
-    val retrofitE = Retrofit.Builder()
-        .client(clientHTTP)
-        .baseUrl(E_BASE_URL)
-        .addConverterFactory(MoshiConverterFactory.create(moshi))
-        .build()
+
     fun retrieveRepos() {
         val progress = findViewById<ContentLoadingProgressBar>(R.id.repo_loading_indicator)
 
