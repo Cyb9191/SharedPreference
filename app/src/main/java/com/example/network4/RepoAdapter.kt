@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.network4.R
+//import com.google.android.gms.ads.mediation.Adapter
+import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 class RepoViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
@@ -16,17 +18,17 @@ class RepoViewHolder(view: View): RecyclerView.ViewHolder(view) {
     }
 }
 
-class RepoAdapter(val repoResults: List<Repo>): RecyclerView.Adapter<RepoViewHolder>() {
+class RepoAdapter(val repoResults: Repo): RecyclerView.Adapter<RepoViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepoViewHolder {
         val repoView = LayoutInflater.from(parent.context).inflate(R.layout.repolistitem, parent, false)
         return RepoViewHolder(repoView)
     }
 
     override fun onBindViewHolder(holder: RepoViewHolder, position: Int) {
-        holder.repoName.text = repoResults[position].city_name
+        holder.repoName.text = repoResults.city_name
     }
 
     override fun getItemCount(): Int {
-        return repoResults.size
+        return 0
     }
 }

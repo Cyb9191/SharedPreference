@@ -7,6 +7,27 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="repo_city">City:</string>
+    <string name="repo_lon">Longitude:</string>
+    <string name="repo_timezone">Timezone:</string>
+    <string name="repo_lat">Latitude:</string>
+    <string name="repo_countrycode">Country code:</string>
+    <string name="repo_statecode">State code:</string>
+    <string name="repodata_mold">Mold level::</string>
+    <string name="repodata_aqi">Aqi:</string>
+    <string name="repodata_pm">Pm:</string>
+    <string name="repodata_co">Co:</string>
+    <string name="repodata_o3">O3:</string>
+    <string name="repodata_pollentype">Predominant pollen type:</string>
+    <string name="repodata_so2">So2:</string>
+    <string name="repodata_pollentree">Pollen level tree:</string>
+    <string name="repodata_pollenweed">Pollen level weed:</string>
+    <string name="repodata_no2">No2:</string>
+    <string name="repodata_pm25">Pm25:</string>
+    <string name="repodata_pollengrass">Pollen level grass::</string>
+    <string name="string_null">       :</string>
+
+
+
+
 </resources>
