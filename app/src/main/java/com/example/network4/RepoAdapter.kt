@@ -5,12 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.network4.R
-//import com.google.android.gms.ads.mediation.Adapter
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
+
 
 class RepoViewHolder(view: View): RecyclerView.ViewHolder(view) {
-
     val repoName: TextView
 
     init {
