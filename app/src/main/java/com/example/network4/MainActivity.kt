@@ -15,11 +15,7 @@ import kotlinx.coroutines.launch
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.converter.gson.GsonConverterFactory
 import android.widget.TextView
-
-
-import com.example.network4.*
 import com.example.network4.databinding.ActivityMainBinding
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
