@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.ContentLoadingProgressBar
-import androidx.lifecycle.lifecycleScope
-import com.google.android.material.snackbar.Snackbar
 import okhttp3.Interceptor
 import retrofit2.Retrofit
 import okhttp3.OkHttpClient
@@ -15,11 +13,9 @@ import kotlinx.coroutines.launch
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.converter.gson.GsonConverterFactory
 import android.widget.TextView
+import androidx.lifecycle.*
 import com.example.network4.databinding.ActivityMainBinding
-import kotlin.collections.ArrayList
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
-class RepoResult() : ArrayList<JvmType.Object>()
 interface RecipesService {
     @GET("current/airquality")
     suspend fun getAirQuality(
@@ -32,6 +28,22 @@ const val E_BASE_URL = "https://air-quality.p.rapidapi.com/"
 const val API_ID = "YourApiID"
 const val API_KEY = "19e7b8759amshe6b93bd55c131c7p120076jsn06452ac17b99"
 const val RAPIDAPI_KEY = "06a7614749msh19cff85cd7e9993p11616djsnda0c69ab3a46"
+class MainActivityViewModel : ViewModel(){
+    var listWeather=MutableLiveData<Repo>()
+    var listError=MutableLiveData<Exception>()
+
+    suspend fun UpdateWheater(recService:RecipesService):Boolean{
+        try {
+            //progress.show()
+            var repos:Repo=recService.getAirQuality("40.71427", "-73.00597")
+            listWeather.value=repos
+            return true
+
+        } catch (e: Exception) {
+            Log.e("MainActivity", "error retrieving repos: $e")
+            listError.value=e
+            return false
+        }}}
 
 data class items(
     val mold_level: Int,
@@ -60,13 +72,34 @@ data class Repo(
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var repos:Repo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         setContentView(R.layout.activity_main)
-        retrieveRepos()
-    }
 
+        val mainActivityViewModel= ViewModelProvider(this).get(MainActivityViewModel::class.java)
+        val firsttext = findViewById(R.id.textview_first) as TextView
+        val errortext=findViewById(R.id.textview_error) as TextView
+        val wheaterObserver= Observer<Repo> { newWheater ->
+            firsttext.text = newWheater.city_name + "\n\n" + newWheater.lon.toString() +
+                    "\n\n" + newWheater.timezone + "\n\n" + newWheater.lat.toString() + "\n\n" +
+                    newWheater.country_code + "\n\n" + newWheater.state_code + "\n\n" + newWheater.data[0].mold_level +
+                    "\n\n" + newWheater.data[0].aqi + "\n\n" + newWheater.data[0].pm10 + "\n\n" + newWheater.data[0].co +
+                    "\n\n" + newWheater.data[0].o3 + "\n\n" + newWheater.data[0].predominant_pollen_type +
+                    "\n\n" + newWheater.data[0].so2 + "\n\n" + newWheater.data[0].pollen_level_tree + "\n\n" +
+                    newWheater.data[0].pollen_level_weed + "\n\n" + newWheater.data[0].no2 +
+                    "\n\n" + newWheater.data[0].pm25 + "\n\n" + newWheater.data[0].pollen_level_grass
+            errortext.text="No Error"
+        }
+        val errorObserver= Observer<Exception> { newError ->
+            errortext.text = newError.toString()
+            firsttext.text ="No Data"
+        }
+        mainActivityViewModel.listWeather.observe(this, wheaterObserver)
+        mainActivityViewModel.listError.observe(this, errorObserver)
+        retrieveRepos(mainActivityViewModel)
+        }
     class HeaderInterceptor : Interceptor {
         override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
             val request = chain.request()
@@ -92,38 +125,23 @@ class MainActivity : AppCompatActivity() {
 
     val recipesService = retrofit.create(RecipesService::class.java)
 
-    fun retrieveRepos() {
-        val progress = findViewById<ContentLoadingProgressBar>(R.id.repo_loading_indicator)
 
-        lifecycleScope.launch {
-            try {
-                progress.show()
-                val repos: Repo = recipesService.getAirQuality("40.71427", "-73.00597")
-                progress.hide()
-                showRepos(repos)
-            } catch (e: Exception) {
-                Log.e("MainActivity", "error retrieving repos: $e")
-                progress.hide()
-                Snackbar.make(
-                    findViewById(R.id.main_view),
-                    "Error retrieving repos",
-                    Snackbar.LENGTH_INDEFINITE
-                ).setAction("Retry") { retrieveRepos() }.show()
+    fun retrieveRepos(vm:MainActivityViewModel) {
+        val progress = findViewById<ContentLoadingProgressBar>(R.id.repo_loading_indicator)
+        lifecycleScope.launch{
+
+            var callingResult: Boolean = vm.UpdateWheater(recipesService)
+            if (!callingResult){
+                retrieveRepos(vm)
             }
-        }
+
+        progress.hide()
     }
 
     fun showRepos(repoResults: Repo) {
         Log.d("MainActivity", "list of repos received, size: $repoResults")
-        val firsttext = findViewById(R.id.textview_first) as TextView
-        firsttext.text = repoResults.city_name + "\n\n" + repoResults.lon.toString() +
-                "\n\n" + repoResults.timezone + "\n\n" + repoResults.lat.toString() + "\n\n" +
-                repoResults.country_code + "\n\n" + repoResults.state_code + "\n\n" + repoResults.data[0].mold_level +
-                "\n\n" + repoResults.data[0].aqi + "\n\n" + repoResults.data[0].pm10 + "\n\n" + repoResults.data[0].co +
-                "\n\n" + repoResults.data[0].o3 + "\n\n" + repoResults.data[0].predominant_pollen_type +
-                "\n\n" + repoResults.data[0].so2 + "\n\n" + repoResults.data[0].pollen_level_tree + "\n\n" +
-                repoResults.data[0].pollen_level_weed + "\n\n" + repoResults.data[0].no2 +
-                "\n\n" + repoResults.data[0].pm25 + "\n\n" + repoResults.data[0].pollen_level_grass
+        //firsttext.setVisibility=
+
     }
-}
+}}
 
