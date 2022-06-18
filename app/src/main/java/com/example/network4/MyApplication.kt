@@ -8,7 +8,7 @@ import com.example.network4.network.dto.LicenseDto
 
 class MyApplication:Application() {
     private val airQualityProvider = AirQualityProvider()
-    val mainActivityViewModel = MyViewModelFactory(airQualityProvider)
+    val mainActivityViewModelStarter = MyViewModelFactory(airQualityProvider)
     //object LicenseAirQuality: LicenseDto {
        // E_BASE_URL : "https://air-quality.p.rapidapi.com/",
       //  API_ID = "YourApiID",

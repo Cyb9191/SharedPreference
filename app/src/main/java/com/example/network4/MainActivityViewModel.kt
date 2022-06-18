@@ -12,7 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainActivityViewModel(val secondAirQualityProvider: AirQualityProvider) {
+class MainActivityViewModel(val secondAirQualityProvider: AirQualityProvider): ViewModel(){
     var listWeather= MutableLiveData<RepoDto>()
     var listError= MutableLiveData<Exception>()
 

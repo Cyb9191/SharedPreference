@@ -23,7 +23,7 @@ class AirQualitySearchScreen:AppCompatActivity(){
         //binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         setContentView(R.layout.activity_main)
         viewModel =
-            (application as MyApplication).mainActivityViewModel.create(MainActivityViewModel::class.java)
+            (application as MyApplication).mainActivityViewModelStarter.create(MainActivityViewModel::class.java)
 
         //ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
