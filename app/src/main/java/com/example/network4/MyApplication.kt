@@ -6,7 +6,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModelProvider
 import com.example.network4.network.dto.LicenseDto
 
-class MyApplication:Application() {
+class MyApplication: Application() {
     private val airQualityProvider = AirQualityProvider()
     val mainActivityViewModelStarter = MyViewModelFactory(airQualityProvider)
     //object LicenseAirQuality: LicenseDto {

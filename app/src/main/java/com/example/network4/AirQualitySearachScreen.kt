@@ -1,35 +1,30 @@
-package com.example.network4.ui
+package com.example.network4
 
+import android.app.Application
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.ContentLoadingProgressBar
+import androidx.databinding.DataBindingUtil.setContentView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import com.example.network4.MainActivityViewModel
-import com.example.network4.MyApplication
-import com.example.network4.R
 import com.example.network4.network.dto.RepoDto
-import kotlinx.coroutines.launch
-import com.example.network4.ActivityMainBinding
 
-class MainActivity:AppCompatActivity(){
-    val firsttext = findViewById(R.id.textview_first) as TextView
-    val errortext=findViewById(R.id.textview_error) as TextView
-    private lateinit var viewModel: MainActivityViewModel
+class AirQualitySearachScreen : AppCompatActivity(){
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         setContentView(R.layout.activity_main)
-        viewModel =
+        val firsttext = findViewById(R.id.textview_first) as TextView
+        val errortext=findViewById(R.id.textview_error) as TextView
+
+        var viewModel: MainActivityViewModel =
             (application as MyApplication).mainActivityViewModelStarter.create(MainActivityViewModel::class.java)
 
         //ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
 
-        val wheatherObserver =Observer<RepoDto> { newWheater ->
+        val wheatherObserver = Observer<RepoDto> { newWheater ->
             firsttext.text = newWheater.city_name + "\n\n" + newWheater.lon.toString() +
                     "\n\n" + newWheater.timezone + "\n\n" + newWheater.lat.toString() + "\n\n" +
                     newWheater.country_code + "\n\n" + newWheater.state_code + "\n\n" + newWheater.data[0].mold_level +
