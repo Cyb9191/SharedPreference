@@ -1,5 +1,6 @@
 package com.example.network4
 
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.lifecycle.MutableLiveData
@@ -12,7 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainActivityViewModel(val secondAirQualityProvider: AirQualityProvider): ViewModel(){
+class MainActivityViewModel(val secondAirQualityProvider: AirQualityProvider,private val preferences: SharedPreferences): ViewModel(){
     var listWeather= MutableLiveData<RepoDto>()
     var listError= MutableLiveData<Exception>()
 

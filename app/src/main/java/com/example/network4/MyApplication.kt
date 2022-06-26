@@ -3,12 +3,15 @@ package com.example.network4
 import android.util.Log
 import com.example.network4.network.dto.AirQualityProvider
 import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModelProvider
 import com.example.network4.network.dto.LicenseDto
 
 class MyApplication: Application() {
     private val airQualityProvider = AirQualityProvider()
     val mainActivityViewModelStarter = MyViewModelFactory(airQualityProvider)
+    lateinit var preferences: SharedPreferences
     //object LicenseAirQuality: LicenseDto {
        // E_BASE_URL : "https://air-quality.p.rapidapi.com/",
       //  API_ID = "YourApiID",
@@ -19,5 +22,6 @@ class MyApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         Log.d("MyAppliction", "started")
+        preferences = getSharedPreferences("app", Context.MODE_PRIVATE)
     }
 }

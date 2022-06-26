@@ -8,7 +8,7 @@ import com.example.network4.MainActivityViewModel
 class MyViewModelFactory (private val thirdAirQualityProvider: AirQualityProvider) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(MainActivityViewModel::class.java)) {
-                return MainActivityViewModel(thirdAirQualityProvider) as T
+                return MainActivityViewModel(thirdAirQualityProvidercheckout -) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
