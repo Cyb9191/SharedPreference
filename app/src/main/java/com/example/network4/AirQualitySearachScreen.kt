@@ -18,8 +18,9 @@ class AirQualitySearachScreen : AppCompatActivity(){
         val firsttext = findViewById(R.id.textview_first) as TextView
         val errortext=findViewById(R.id.textview_error) as TextView
 
-        var viewModel: MainActivityViewModel =
+        val viewModel: MainActivityViewModel =
             (application as MyApplication).mainActivityViewModelStarter.create(MainActivityViewModel::class.java)
+        viewModel.retrieveRepos()
 
         //ViewModelProvider(this).get(MainActivityViewModel::class.java)
 

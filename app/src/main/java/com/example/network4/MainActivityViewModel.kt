@@ -6,6 +6,7 @@ import androidx.core.widget.ContentLoadingProgressBar
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import com.example.network4.network.dto.AirQualityProvider
 import com.example.network4.network.dto.RecipesService
 import com.example.network4.network.dto.RepoDto
@@ -13,11 +14,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainActivityViewModel(val secondAirQualityProvider: AirQualityProvider,private val preferences: SharedPreferences): ViewModel(){
+class MainActivityViewModel(val secondAirQualityProvider: AirQualityProvider): ViewModel(){
     var listWeather= MutableLiveData<RepoDto>()
     var listError= MutableLiveData<Exception>()
 
-
+//,private val preferences: SharedPreferences
     suspend fun UpdateWheater(recService: RecipesService):Boolean{
         try {
             //progress.show()
@@ -30,12 +31,12 @@ class MainActivityViewModel(val secondAirQualityProvider: AirQualityProvider,pri
             listError.value=e
             return false
         }}
-    fun retrieveRepos(vm:MainActivityViewModel) {
+    fun retrieveRepos() {
 
-        CoroutineScope(Dispatchers.Main).launch {
-            var callingResult: Boolean = vm.UpdateWheater(secondAirQualityProvider.recipesService)
+        viewModelScope.launch {
+            var callingResult: Boolean = UpdateWheater(secondAirQualityProvider.recipesService)
             if (!callingResult) {
-                retrieveRepos(vm)
+                retrieveRepos()
             }
 
 

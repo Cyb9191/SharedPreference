@@ -10,7 +10,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class AirQualityProvider {
 
-
     val logger = HttpLoggingInterceptor().apply { setLevel(HttpLoggingInterceptor.Level.BASIC) }
     val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(HeaderInterceptor())
