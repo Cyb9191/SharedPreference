@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.network4.network.dto.RepoDto
 
 
 class RepoViewHolder(view: View): RecyclerView.ViewHolder(view) {
@@ -15,7 +16,7 @@ class RepoViewHolder(view: View): RecyclerView.ViewHolder(view) {
     }
 }
 
-class RepoAdapter(val repoResults: Repo): RecyclerView.Adapter<RepoViewHolder>() {
+class RepoAdapter(val repoResults: RepoDto): RecyclerView.Adapter<RepoViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepoViewHolder {
         val repoView = LayoutInflater.from(parent.context).inflate(R.layout.repolistitem, parent, false)
         return RepoViewHolder(repoView)
