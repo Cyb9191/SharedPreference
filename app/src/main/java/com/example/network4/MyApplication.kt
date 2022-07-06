@@ -10,7 +10,7 @@ import com.example.network4.network.dto.LicenseDto
 
 class MyApplication: Application() {
     private val airQualityProvider = AirQualityProvider()
-    val mainActivityViewModelStarter = MyViewModelFactory(airQualityProvider)
+    lateinit var mainActivityViewModelStarter : MyViewModelFactory
     lateinit var preferences: SharedPreferences
     //object LicenseAirQuality: LicenseDto {
        // E_BASE_URL : "https://air-quality.p.rapidapi.com/",
@@ -23,5 +23,6 @@ class MyApplication: Application() {
         super.onCreate()
         Log.d("MyAppliction", "started")
         preferences = getSharedPreferences("app", Context.MODE_PRIVATE)
+        mainActivityViewModelStarter = MyViewModelFactory(airQualityProvider, preferences)
     }
 }
