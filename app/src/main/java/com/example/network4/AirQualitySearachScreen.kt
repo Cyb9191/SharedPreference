@@ -2,46 +2,72 @@ package com.example.network4
 
 import android.app.Application
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.ContentLoadingProgressBar
 import androidx.databinding.DataBindingUtil.setContentView
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.network4.network.dto.AirQualityProvider
+import com.example.network4.network.dto.AirQualityRepository
 import com.example.network4.network.dto.RepoDto
+import com.example.network4.network.dto.RepoResult
+import com.google.android.material.snackbar.Snackbar
 
 class AirQualitySearachScreen : AppCompatActivity(){
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        //binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        setContentView(R.layout.activity_main)
-        val firsttext = findViewById(R.id.textview_first) as TextView
-        val errortext=findViewById(R.id.textview_error) as TextView
+private lateinit var viewModel: MainActivityViewModel
 
-        val viewModel: MainActivityViewModel =
-            (application as MyApplication).mainActivityViewModelStarter.create(MainActivityViewModel::class.java)
-        viewModel.retrieveRepos()
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_main)
 
-        //ViewModelProvider(this).get(MainActivityViewModel::class.java)
+    viewModel =
+        (application as MyApplication).mainActivityViewModelStarter.create(MainActivityViewModel::class.java)
 
+    observeRepos()
+    viewModel.send(GithubSearchEvent.RetrieveUserRepos("mrsasha"))
 
-        val wheatherObserver = Observer<RepoDto> { newWheater ->
-            firsttext.text = newWheater.city_name + "\n\n" + newWheater.lon.toString() +
-                    "\n\n" + newWheater.timezone + "\n\n" + newWheater.lat.toString() + "\n\n" +
-                    newWheater.country_code + "\n\n" + newWheater.state_code + "\n\n" + newWheater.data[0].mold_level +
-                    "\n\n" + newWheater.data[0].aqi + "\n\n" + newWheater.data[0].pm10 + "\n\n" + newWheater.data[0].co +
-                    "\n\n" + newWheater.data[0].o3 + "\n\n" + newWheater.data[0].predominant_pollen_type +
-                    "\n\n" + newWheater.data[0].so2 + "\n\n" + newWheater.data[0].pollen_level_tree + "\n\n" +
-                    newWheater.data[0].pollen_level_weed + "\n\n" + newWheater.data[0].no2 +
-                    "\n\n" + newWheater.data[0].pm25 + "\n\n" + newWheater.data[0].pollen_level_grass
-            errortext.text = "No Error"
+  }
+
+  fun observeRepos() {
+    val progress = findViewById<ContentLoadingProgressBar>(R.id.repo_loading_indicator)
+    progress.show()
+
+    viewModel.result.observe(this, {
+        progress.hide()
+        Log.d("MainActivity", "event: $it")
+
+        when (it) {
+            is AirQualitySearchViewmodelEvent.AirQualitySearchResult -> showRepos(it.repos)
+            is AirQualitySearchViewmodelEvent.AirQualitySearchError -> Snackbar.make(
+                findViewById(R.id.main_view),
+                "Error retrieving repos: $it",
+                Snackbar.LENGTH_INDEFINITE
+            )
+                .setAction("Retry") { viewModel.send(GithubSearchEvent.RetrieveUserRepos("mrsasha")) }
+                .show()
+            is AirQualitySearchViewmodelEvent.FirstTimeUser -> Toast.makeText(
+                this,
+                "Hi, nice to have you here!",
+                Toast.LENGTH_LONG
+            ).show()
         }
+    })
+}
 
-        val errorObserver= Observer<Exception> { newError ->
-            errortext.text = newError.toString()
-            firsttext.text ="No Data"
-        }
-        viewModel.listWeather.observe(this, wheatherObserver)
-        viewModel.listError.observe(this, errorObserver)
+  fun showRepos(repoResults: List<AirQualityRepository>) {
+    Log.d("MainActivity", "list of repos received, size: ${repoResults.size}")
 
-    }}
+    val list = findViewById<RecyclerView>(R.id.repo_list)
+    list.visibility = View.VISIBLE
+    val adapter = RepoAdapter(repoResults)
+    list.adapter = adapter
+    list.layoutManager = LinearLayoutManager(this)
+}
+}

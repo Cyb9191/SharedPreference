@@ -9,5 +9,6 @@ interface RecipesService {
     suspend fun getAirQuality(
         @Query("lat") recipe: String,
         @Query("lon") recipeb: String,
-    ): RepoDto
+        @Query("per_page") pageSize: Int
+    ): RepoResult
 }

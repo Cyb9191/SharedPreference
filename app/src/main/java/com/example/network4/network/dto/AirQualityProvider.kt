@@ -8,6 +8,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+const val PAGE_SIZE = 20
 class AirQualityProvider {
 
     val logger = HttpLoggingInterceptor().apply { setLevel(HttpLoggingInterceptor.Level.BASIC) }
@@ -16,13 +17,23 @@ class AirQualityProvider {
         .build()
 
     val retrofit = Retrofit.Builder()
-        .client(okHttpClient )
+        .client(okHttpClient)
         .baseUrl("https://air-quality.p.rapidapi.com")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
+
     val recipesService = retrofit.create(RecipesService::class.java)
-    fun returnRecipesSerevice(): RecipesService {
-        return(recipesService)
+    fun returnRecipesService(): RecipesService {
+        return (recipesService)
     }
+
+    suspend fun GetUserRepos(
+        firststring: String,
+        secondstring: String
+    ): List<AirQualityRepository> =
+        recipesService.getAirQuality(firststring, secondstring, PAGE_SIZE)
+            .map { it.toAirQualityRepository() }
+
 }
+

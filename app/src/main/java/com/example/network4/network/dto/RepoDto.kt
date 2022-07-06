@@ -11,3 +11,4 @@ data class RepoDto(
     val state_code: String,
     val data: Array<items>
 )
+fun RepoDto.toAirQualityRepository() = AirQualityRepository(this.city_name)
